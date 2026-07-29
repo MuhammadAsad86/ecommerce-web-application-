@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
@@ -168,14 +167,3 @@ const PlaceOrder = () => {
 };
 
 export default PlaceOrder;
-=======
-import React from 'react'
-
-const PlaceOrder = () => {
-  return (
-    <div>PlaceOrder</div>
-  )
-}
-
-export default PlaceOrder
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

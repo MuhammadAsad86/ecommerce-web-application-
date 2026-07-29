@@ -1,5 +1,4 @@
 import React from 'react'
-<<<<<<< HEAD
 import Title from '../components/Title'
 import { assets } from '../assets/frontend_assets/assets'
 import Newsletter from '../components/NewsLetter'
@@ -53,13 +52,3 @@ const Contact = () => {
 }
 
 export default Contact
-=======
-
-const Contact = () => {
-  return (
-    <div>Contact</div>
-  )
-}
-
-export default Contact
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

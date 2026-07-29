@@ -1,5 +1,4 @@
 import React from 'react'
-<<<<<<< HEAD
 import Title from '../components/Title'
 import { assets } from '../assets/frontend_assets/assets'
 import NewsLetter from "../components/NewsLetter";
@@ -79,13 +78,3 @@ const About = () => {
 }
 
 export default About
-=======
-
-const About = () => {
-  return (
-    <div>About</div>
-  )
-}
-
-export default About
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

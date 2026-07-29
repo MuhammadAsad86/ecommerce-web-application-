@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
@@ -151,14 +150,3 @@ const Product = () => {
 };
 
 export default Product;
-=======
-import React from 'react'
-
-const Product = () => {
-  return (
-    <div>Product</div>
-  )
-}
-
-export default Product
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

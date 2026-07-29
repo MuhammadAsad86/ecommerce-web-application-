@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 import { createContext, useState } from "react";
 import { products } from "../assets/frontend_assets/assets";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-=======
-import { createContext } from "react";
-import { products } from "../assets/frontend_assets/assets";
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
 
 export const ShopContext = createContext();
 
@@ -14,7 +9,6 @@ const ShopContextProvider = (props) => {
 
   const currency = "$";
   const delivery_fee = 10;
-<<<<<<< HEAD
 
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -96,10 +90,6 @@ const ShopContextProvider = (props) => {
     return totalAmount;
 
   };
-=======
-  const [search, setSearch] = useState("");
-  const [showSearch, setShowSearch] = useState(true);
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
 
   const value = {
     products,
@@ -108,7 +98,6 @@ const ShopContextProvider = (props) => {
     search,
     setSearch,
     showSearch,
-<<<<<<< HEAD
     setShowSearch,
     cartItems,
     addToCart,
@@ -119,10 +108,6 @@ const ShopContextProvider = (props) => {
   }
 
 
-=======
-    setShowSearch
-  };
->>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
 
   return (
     <ShopContext.Provider value={value}>
