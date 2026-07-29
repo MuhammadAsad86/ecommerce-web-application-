@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 
 const Login = () => {
@@ -66,3 +67,14 @@ const Login = () => {
 };
 
 export default Login;
+=======
+import React from 'react'
+
+const Login = () => {
+  return (
+    <div>Login</div>
+  )
+}
+
+export default Login
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

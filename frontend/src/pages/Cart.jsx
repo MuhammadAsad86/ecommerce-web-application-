@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
@@ -118,3 +119,14 @@ const Cart = () => {
 };
 
 export default Cart;
+=======
+import React from 'react'
+
+const Cart = () => {
+  return (
+    <div>Cart</div>
+  )
+}
+
+export default Cart
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

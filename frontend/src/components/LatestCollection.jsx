@@ -13,16 +13,28 @@ const LatestCollection = () => {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div className='my-24'>
       <div className='text-center py-8 text-3xl section-heading'>
         <Title text1={'LATEST'} text2={'COLLECTIONS'} />
 
         <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-secondary'>
+=======
+    <div className='my-10'>
+      <div className='text-center py-8 text-3xl'>
+        <Title text1={'LATEST'} text2={'COLLECTIONS'} />
+
+        <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
         </p>
       </div>
       {/* Rendering Products */}
+<<<<<<< HEAD
 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 gap-y-7'>
+=======
+<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
   {
     latestProducts.map((item, index) => (
       <ProductItem
@@ -39,4 +51,8 @@ const LatestCollection = () => {
   )
 }
 
+<<<<<<< HEAD
 export default LatestCollection
+=======
+export default LatestCollection
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54

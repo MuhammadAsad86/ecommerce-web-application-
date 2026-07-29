@@ -14,6 +14,7 @@ const BestSeller = () => {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div className='my-24'>
       <div className='text-center text-3xl py-8 section-heading'>
         <Title text1={'BEST'} text2={'SELLERS'} />
@@ -22,6 +23,16 @@ const BestSeller = () => {
         </p>
       </div>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 gap-y-7'>
+=======
+    <div className='my-10'>
+      <div className='text-center text-3xl py-8'>
+        <Title text1={'BEST'} text2={'SELLERS'} />
+        <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+        </p>
+      </div>
+      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
   {
     bestSeller.map((item, index) => (
       <ProductItem
@@ -38,4 +49,8 @@ const BestSeller = () => {
   )
 }
 
+<<<<<<< HEAD
 export default BestSeller
+=======
+export default BestSeller
+>>>>>>> 7b41c0a5e63a9049f7da6ae3a73968f6d1b12b54
