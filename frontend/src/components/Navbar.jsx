@@ -4,184 +4,244 @@ import { NavLink, Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
+
   const [visible, setVisible] = useState(false);
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+
+  const {
+    setShowSearch,
+    getCartCount,
+    navigate,
+  } = useContext(ShopContext);
 
   useEffect(() => {
+
     document.body.style.overflow = visible ? "hidden" : "";
+
     return () => {
+
       document.body.style.overflow = "";
+
     };
+
   }, [visible]);
 
   const navLinkClass = ({ isActive }) =>
-    `px-3.5 py-1.5 rounded-full transition-all duration-300 border ${
+    `relative rounded-full px-5 py-2 text-[12px] font-semibold tracking-[0.18em] transition-all duration-300 ${
       isActive
-        ? "bg-gray-100 text-primary border-gray-200/80 ring-2 ring-blue-500/20 shadow-sm font-semibold"
-        : "text-secondary border-transparent hover:bg-gray-100 hover:text-primary hover:border-gray-200/80 hover:ring-2 hover:ring-blue-500/20"
+        ? "bg-blue-600 text-white shadow-lg"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
     }`;
 
   return (
-    <div className="sticky top-0 z-30 -mx-4 sm:-mx-8 md:-mx-12 lg:-mx-16 px-4 sm:px-8 md:px-12 lg:px-16 pt-2 pb-1">
-      <div className="flex justify-between items-center px-4 sm:px-6 py-1 font-medium bg-background/70 backdrop-blur-xl border border-border/70 rounded-2xl shadow-card supports-[backdrop-filter]:bg-background/60">        
-        <Link to="/" className="shrink-0 transition-transform duration-300 hover:scale-[1.03]" aria-label="Go to homepage">
-          <img src={assets.logo} className="w-24 sm:w-28" alt="Logo" />
-        </Link>
 
-        <ul className="hidden sm:flex items-center gap-4 text-[11px] tracking-[.14em]">
-          <NavLink to="/" className={navLinkClass}>
-            HOME
-          </NavLink>
+    <header className="sticky top-0 z-50 px-4 pt-4 sm:px-8 md:px-12 lg:px-16">
 
-          <NavLink to="/collection" className={navLinkClass}>
-            COLLECTION
-          </NavLink>
+      <div className="rounded-[28px] border border-slate-200 bg-white/90 px-6 py-4 shadow-xl backdrop-blur-xl">
 
-          <NavLink to="/about" className={navLinkClass}>
-            ABOUT
-          </NavLink>
+        <div className="flex items-center justify-between">
 
-          <NavLink to="/contact" className={navLinkClass}>
-            CONTACT
-          </NavLink>
-        </ul>
-
-        <div className="flex items-center gap-3 sm:gap-4">
-          <button
-            type="button"
-            onClick={() => setShowSearch(true)}
-            aria-label="Search"
-            className="grid place-items-center w-8 h-8 rounded-full text-secondary transition-all duration-300 hover:bg-surface hover:text-primary hover:scale-105 active:scale-95"
-          >
-            <img src={assets.search_icon} className="w-[18px]" alt="" />
-          </button>
-
-          <div className="group relative">
-            <Link
-              to="/login"
-              aria-label="Account"
-              className="grid place-items-center w-8 h-8 rounded-full text-secondary transition-all duration-300 hover:bg-surface hover:text-primary hover:scale-105 active:scale-95"
-            >
-              <img className="w-[18px]" src={assets.profile_icon} alt="" />
-            </Link>
-
-            <div className="invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all duration-300 ease-out absolute right-0 pt-2 z-40">
-              <div className="flex flex-col gap-1 w-44 py-3 px-2 bg-card/95 backdrop-blur-xl text-secondary rounded-2xl shadow-card-hover border border-border/70">
-                <p className="cursor-pointer px-3 py-2 rounded-xl text-sm hover:bg-surface hover:text-primary transition-colors duration-200">
-                  My Profile
-                </p>
-                <p className="cursor-pointer px-3 py-2 rounded-xl text-sm hover:bg-surface hover:text-primary transition-colors duration-200">
-                  Orders
-                </p>
-                <p className="cursor-pointer px-3 py-2 rounded-xl text-sm hover:bg-surface hover:text-primary transition-colors duration-200">
-                  Logout
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Logo */}
 
           <Link
-            to="/cart"
-            aria-label="Cart"
-            className="relative grid place-items-center w-8 h-8 rounded-full text-secondary transition-all duration-300 hover:bg-surface hover:text-primary hover:scale-105 active:scale-95"
+            to="/"
+            className="transition-all duration-300 hover:scale-105"
           >
-            <img src={assets.cart_icon} className="w-[18px] min-w-[18px]" alt="" />
-            {getCartCount() > 0 && (
-              <p className="absolute right-0 top-0 min-w-[16px] h-4 px-[3px] grid place-items-center bg-accent text-white rounded-full text-[9px] font-bold shadow-button">
-                {getCartCount()}
-              </p>
-            )}
+
+            <img
+              src={assets.logo}
+              alt="Logo"
+              className="w-28 sm:w-32"
+            />
+
           </Link>
 
-          <button
-            type="button"
-            onClick={() => setVisible(true)}
-            aria-label="Open menu"
-            className="grid place-items-center w-8 h-8 rounded-full text-secondary sm:hidden transition-all duration-300 hover:bg-surface hover:text-primary active:scale-95"
-          >
-            <img src={assets.menu_icon} className="w-[18px]" alt="" />
-          </button>
-        </div>
-      </div>
+        <ul className="hidden items-center gap-3 lg:flex">
 
-      {/* Overlay for mobile menu */}
-      <div
-        onClick={() => setVisible(false)}
-        aria-hidden="true"
-        className={`fixed inset-0 z-40 bg-primary/30 backdrop-blur-sm transition-opacity duration-300 ${
-          visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+  <NavLink
+    to="/"
+    className={navLinkClass}
+  >
+    HOME
+  </NavLink>
+
+  <NavLink
+    to="/collection"
+    className={navLinkClass}
+  >
+    COLLECTION
+  </NavLink>
+
+  <NavLink
+    to="/about"
+    className={navLinkClass}
+  >
+    ABOUT
+  </NavLink>
+
+  <NavLink
+    to="/contact"
+    className={navLinkClass}
+  >
+    CONTACT
+  </NavLink>
+
+</ul>
+
+{/* Right Side */}
+
+<div className="flex items-center gap-2 sm:gap-3">
+
+  {/* Search */}
+
+  <button
+    type="button"
+    onClick={() => setShowSearch(true)}
+    className="flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 hover:bg-slate-100 hover:scale-105"
+  >
+
+    <img
+      src={assets.search_icon}
+      alt="Search"
+      className="h-5 w-5"
+    />
+
+  </button>
+
+  {/* Cart */}
+
+  <Link
+    to="/cart"
+    className="relative flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 hover:bg-slate-100 hover:scale-105"
+  >
+
+    <img
+      src={assets.cart_icon}
+      alt="Cart"
+      className="h-5 w-5"
+    />
+
+    {getCartCount() > 0 && (
+
+      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white shadow-lg">
+
+        {getCartCount()}
+
+      </span>
+
+    )}
+
+  </Link>
+
+  {/* Mobile Menu */}
+
+  <button
+    type="button"
+    onClick={() => setVisible(true)}
+    className="flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 hover:bg-slate-100 hover:scale-105 lg:hidden"
+  >
+
+    <img
+      src={assets.menu_icon}
+      alt="Menu"
+      className="h-5 w-5"
+    />
+
+  </button>
+
+</div>
+
+</div>
+
+</div>
+
+{/* Overlay */}
+
+<div
+  onClick={() => setVisible(false)}
+  className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-all duration-300 ${
+    visible
+      ? "opacity-100"
+      : "pointer-events-none opacity-0"
+  }`}
+/>
+
+{/* Mobile Sidebar */}
+
+<div
+  className={`fixed right-0 top-0 z-50 h-screen w-80 bg-white shadow-2xl transition-transform duration-300 ${
+    visible ? "translate-x-0" : "translate-x-full"
+  }`}
+>
+
+  {/* Header */}
+
+  <div className="flex items-center justify-between border-b border-slate-200 p-6">
+
+    <img
+      src={assets.logo}
+      alt="Logo"
+      className="w-28"
+    />
+
+    <button
+      onClick={() => setVisible(false)}
+      className="rounded-full p-2 transition hover:bg-slate-100"
+    >
+
+      <img
+        src={assets.dropdown_icon}
+        alt="Close"
+        className="h-4 rotate-180"
       />
 
-      {/* Sidebar menu for small screens */}
-      <div
-        role="dialog"
-        aria-label="Mobile navigation menu"
-        className={`fixed top-0 right-0 bottom-0 z-50 w-full max-w-xs bg-card/95 backdrop-blur-xl shadow-hero border-l border-border/70 transition-transform duration-300 ease-out ${
-          visible ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col h-full text-secondary">
-          <button
-            type="button"
-            onClick={() => setVisible(false)}
-            aria-label="Close menu"
-            className="flex items-center gap-3 p-5 cursor-pointer hover:bg-surface transition-colors duration-200 border-b border-border/70"
-          >
-            <img className="h-3 rotate-180" src={assets.dropdown_icon} alt="" />
-            <p className="text-sm font-semibold tracking-wide text-primary">Back</p>
-          </button>
+    </button>
 
-          <nav className="flex flex-col">
-            <NavLink
-              onClick={() => setVisible(false)}
-              className={({ isActive }) =>
-                `py-4 pl-6 border-b border-border/70 text-sm tracking-wide transition-colors duration-200 hover:bg-surface hover:text-primary ${
-                  isActive ? "text-primary bg-surface font-semibold" : ""
-                }`
-              }
-              to="/"
-            >
-              HOME
-            </NavLink>
-            <NavLink
-              onClick={() => setVisible(false)}
-              className={({ isActive }) =>
-                `py-4 pl-6 border-b border-border/70 text-sm tracking-wide transition-colors duration-200 hover:bg-surface hover:text-primary ${
-                  isActive ? "text-primary bg-surface font-semibold" : ""
-                }`
-              }
-              to="/collection"
-            >
-              COLLECTION
-            </NavLink>
-            <NavLink
-              onClick={() => setVisible(false)}
-              className={({ isActive }) =>
-                `py-4 pl-6 border-b border-border/70 text-sm tracking-wide transition-colors duration-200 hover:bg-surface hover:text-primary ${
-                  isActive ? "text-primary bg-surface font-semibold" : ""
-                }`
-              }
-              to="/about"
-            >
-              ABOUT
-            </NavLink>
-            <NavLink
-              onClick={() => setVisible(false)}
-              className={({ isActive }) =>
-                `py-4 pl-6 border-b border-border/70 text-sm tracking-wide transition-colors duration-200 hover:bg-surface hover:text-primary ${
-                  isActive ? "text-primary bg-surface font-semibold" : ""
-                }`
-              }
-              to="/contact"
-            >
-              CONTACT
-            </NavLink>
-          </nav>
-        </div>
-      </div>
-    </div>
-  );
+  </div>
+
+  {/* Navigation */}
+
+  <nav className="flex flex-col p-5">
+
+    <NavLink
+      to="/"
+      onClick={() => setVisible(false)}
+      className="rounded-xl px-5 py-4 text-sm font-medium transition hover:bg-slate-100"
+    >
+      HOME
+    </NavLink>
+
+    <NavLink
+      to="/collection"
+      onClick={() => setVisible(false)}
+      className="rounded-xl px-5 py-4 text-sm font-medium transition hover:bg-slate-100"
+    >
+      COLLECTION
+    </NavLink>
+
+    <NavLink
+      to="/about"
+      onClick={() => setVisible(false)}
+      className="rounded-xl px-5 py-4 text-sm font-medium transition hover:bg-slate-100"
+    >
+      ABOUT
+    </NavLink>
+
+    <NavLink
+      to="/contact"
+      onClick={() => setVisible(false)}
+      className="rounded-xl px-5 py-4 text-sm font-medium transition hover:bg-slate-100"
+    >
+      CONTACT
+    </NavLink>
+
+  </nav>
+
+</div>
+
+</header>
+
+);
+
 };
 
 export default Navbar;

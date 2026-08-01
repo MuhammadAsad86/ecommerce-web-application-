@@ -7,6 +7,7 @@ import RelatedProducts from '../components/RelatedProduct';
 const Product = () => {
 
   const { productId } = useParams();
+
   const { products, currency, addToCart } = useContext(ShopContext);
 
   const [productData, setProductData] = useState(false);
@@ -16,137 +17,362 @@ const Product = () => {
   const fetchProductData = async () => {
 
     products.map((item) => {
+
       if (item._id === productId) {
+
         setProductData(item);
         setImage(item.image[0]);
+
         return null;
+
       }
+
     });
 
   };
 
   useEffect(() => {
+
     fetchProductData();
+
   }, [productId]);
 
   return productData ? (
-    <div className='pt-12 transition-opacity ease-in duration-500 opacity-100'>
 
-      {/* Product Data */}
-      <div className='flex gap-10 lg:gap-16 flex-col sm:flex-row'>
+    <section className="my-14">
 
-        {/* Product Images */}
-        <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
+      <div className="grid gap-12 lg:grid-cols-2">
 
-          <div className='flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
+        {/* LEFT SIDE */}
+
+        <div className="flex flex-col-reverse gap-5 lg:flex-row">
+
+          {/* Thumbnails */}
+
+          <div className="flex gap-4 overflow-x-auto lg:w-24 lg:flex-col lg:overflow-y-auto">
+
             {productData.image.map((item, index) => (
-              <img onClick={() => setImage(item)} src={item} key={index} className={`w-[24%] sm:w-full rounded-xl border flex-shrink-0 cursor-pointer transition-all duration-200 ${item === image ? 'border-accent shadow-card' : 'border-transparent opacity-70 hover:opacity-100'}`} />
+
+              <button
+                key={index}
+                onClick={() => setImage(item)}
+                className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
+                  image === item
+                    ? "border-accent shadow-card-hover"
+                    : "border-border opacity-70 hover:opacity-100"
+                }`}
+              >
+
+                <img
+                  src={item}
+                  alt=""
+                  className="h-24 w-24 object-cover"
+                />
+
+              </button>
+
             ))}
+
           </div>
 
-          <div className="w-full sm:w-[80%] overflow-hidden rounded-[24px] bg-surface shadow-card">
+          {/* Main Image */}
+
+          <div className="relative flex-1 overflow-hidden rounded-[32px] border border-border bg-card shadow-card">
+
+            {/* Glow */}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 transition duration-500 hover:opacity-100"></div>
+
             <img
-              className="w-full h-auto transition-transform duration-500 hover:scale-105"
               src={image}
               alt={productData.name}
+              className="w-full object-cover transition-all duration-700 hover:scale-105"
             />
+
           </div>
 
         </div>
 
-        {/* -------- Product Info -------- */}
-        <div className='flex-1 surface-panel p-6 sm:p-8 self-start'>
+               {/* PRODUCT INFO */}
 
-          <p className='text-[11px] font-semibold tracking-[.14em] text-accent'>CURATED ESSENTIAL</p>
-          <h1 className='font-heading font-medium text-3xl tracking-[-.04em] mt-3'>{productData.name}</h1>
+        <div className="surface-panel self-start rounded-[32px] p-8">
 
-          <div className='flex items-center gap-1 mt-2'>
-            <img src={assets.star_icon} alt="" className='w-3.5' />
-            <img src={assets.star_icon} alt="" className='w-3.5' />
-            <img src={assets.star_icon} alt="" className='w-3.5' />
-            <img src={assets.star_icon} alt="" className='w-3.5' />
-            <img src={assets.star_dull_icon} alt="" className='w-3.5' />
-            <p className='pl-2'>(122)</p>
+          <span className="inline-flex rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
+
+            Premium Collection
+
+          </span>
+
+          <h1 className="mt-5 font-heading text-4xl text-primary">
+
+            {productData.name}
+
+          </h1>
+
+          {/* Rating */}
+
+          <div className="mt-5 flex items-center gap-1">
+
+            <img src={assets.star_icon} className="w-4" alt="" />
+            <img src={assets.star_icon} className="w-4" alt="" />
+            <img src={assets.star_icon} className="w-4" alt="" />
+            <img src={assets.star_icon} className="w-4" alt="" />
+            <img src={assets.star_dull_icon} className="w-4" alt="" />
+
+            <span className="ml-3 text-secondary">
+
+              (122 Reviews)
+
+            </span>
+
           </div>
 
-          <p className='mt-5 text-3xl font-medium'>
-            {currency}{productData.price}
-          </p>
+          {/* Price */}
 
-          <p className='mt-5 text-muted md:w-4/5'>
+          <div className="mt-8">
+
+            <p className="text-sm uppercase tracking-[0.2em] text-secondary">
+
+              Price
+
+            </p>
+
+            <h2 className="mt-2 text-5xl font-bold text-accent">
+
+              {currency}{productData.price}
+
+            </h2>
+
+          </div>
+
+          {/* Description */}
+
+          <p className="mt-8 leading-8 text-secondary">
+
             {productData.description}
+
           </p>
 
-          <div className='flex flex-col gap-4 my-8'>
-            <p>Select Size</p>
+          {/* Size */}
 
-            <div className='flex gap-2'>
-              {
-                productData.sizes.map((item, index) => (
-                  <button
-                    onClick={() => setSize(item)}
-                    className={`border py-2 px-4 bg-surface rounded-lg transition-colors duration-200 ${item === size ? "border-accent" : "border-border"
-                      }`}
-                    key={index}
-                  >
-                    {item}
-                  </button>
-                ))
-              }
+          <div className="mt-10">
+
+            <p className="mb-4 text-lg font-semibold text-primary">
+
+              Select Size
+
+            </p>
+
+            <div className="flex flex-wrap gap-3">
+
+              {productData.sizes.map((item, index) => (
+
+                <button
+                  key={index}
+                  onClick={() => setSize(item)}
+                  className={`rounded-xl border px-6 py-3 font-medium transition-all duration-300 ${
+                    item === size
+                      ? "border-accent bg-accent text-white shadow-card-hover"
+                      : "border-border bg-card hover:border-accent"
+                  }`}
+                >
+
+                  {item}
+
+                </button>
+
+              ))}
+
             </div>
+
           </div>
 
-          <button onClick={() => addToCart(productData._id, size)} className='premium-button bg-primary text-white px-8 py-4 text-xs shadow-button'>
-            ADD TO CART
+          {/* Button */}
+
+          <button
+            onClick={() => addToCart(productData._id, size)}
+            className="mt-10 w-full rounded-2xl bg-primary px-8 py-5 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-accent"
+          >
+
+            Add To Cart
+
           </button>
 
-          <hr className='mt-8 sm:w-4/5' />
+          {/* Features */}
 
-          <div className='text-sm text-muted mt-5 flex flex-col gap-1'>
-            <p>100% Original product.</p>
-            <p>Cash on delivery is available on this product.</p>
-            <p>Easy return and exchange policy within 7 days.</p>
+          <div className="mt-10 space-y-3 rounded-2xl border border-border bg-card p-6 text-secondary">
+
+            <p>✓ 100% Original Product</p>
+
+            <p>✓ Cash On Delivery Available</p>
+
+            <p>✓ Easy 7 Day Return & Exchange</p>
+
+            <p>✓ Secure Online Payments</p>
+
           </div>
 
         </div>
 
       </div>
-      {/* -------- Description & Review Section -------- */}
-      <div className='mt-20 surface-panel overflow-hidden'>
 
-        <div className='flex'>
-          <b className='bg-primary text-white px-6 py-4 text-sm'>Description</b>
-          <p className='px-6 py-4 text-sm text-muted'>Reviews (122)</p>
+     
+          {/* Description & Reviews */}
+
+      <section className="mt-20 overflow-hidden rounded-[32px] border border-border bg-card shadow-card">
+
+        {/* Header */}
+
+        <div className="flex border-b border-border">
+
+          <button className="bg-primary px-8 py-5 text-sm font-semibold uppercase tracking-[0.15em] text-white">
+
+            Description
+
+          </button>
+
+          <button className="px-8 py-5 text-sm font-medium text-secondary transition-colors duration-300 hover:text-primary">
+
+            Reviews (122)
+
+          </button>
+
         </div>
 
-        <div className='flex flex-col gap-4 border-t border-border px-6 py-7 text-sm leading-6 text-muted'>
+        {/* Content */}
+
+        <div className="space-y-6 p-8 leading-8 text-secondary">
+
           <p>
-            An e-commerce website is an online platform that facilitates the buying
-            and selling of products or services over the internet. It serves as a
-            virtual marketplace where businesses and individuals can showcase their
-            products, interact with customers, and conduct transactions without the
-            need for a physical presence. E-commerce websites have gained immense
-            popularity due to the convenience, accessibility, and the global reach
-            they offer.
+
+            Experience premium craftsmanship with carefully selected
+            materials, modern styling and exceptional comfort. Every
+            product is designed to provide lasting quality while
+            maintaining a clean and timeless appearance.
+
           </p>
 
           <p>
-            E-commerce websites typically display products or services along with
-            detailed descriptions, images, prices, and any available variations
-            (e.g., sizes, colors). Each product usually has its own dedicated page
-            with relevant information.
+
+            Our collection is built for everyday wear, combining
+            elegant design with durability. Whether you're shopping
+            for casual outfits or premium essentials, every piece is
+            made to deliver style, comfort and confidence.
+
           </p>
+
+          <div className="grid gap-5 pt-4 md:grid-cols-3">
+
+            <div className="rounded-2xl border border-border bg-surface p-6">
+
+              <h3 className="font-semibold text-primary">
+
+                Premium Materials
+
+              </h3>
+
+              <p className="mt-3 text-sm text-secondary">
+
+                Carefully selected fabrics with superior comfort and
+                long lasting durability.
+
+              </p>
+
+            </div>
+
+            <div className="rounded-2xl border border-border bg-surface p-6">
+
+              <h3 className="font-semibold text-primary">
+
+                Secure Shopping
+
+              </h3>
+
+              <p className="mt-3 text-sm text-secondary">
+
+                Fast checkout with trusted payment methods and secure
+                transactions.
+
+              </p>
+
+            </div>
+
+            <div className="rounded-2xl border border-border bg-surface p-6">
+
+              <h3 className="font-semibold text-primary">
+
+                Fast Delivery
+
+              </h3>
+
+              <p className="mt-3 text-sm text-secondary">
+
+                Reliable shipping with easy tracking and quick
+                delivery to your doorstep.
+
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
-      </div>
+      </section>
 
-      {/* -------- display Related Products -------- */}
-      <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
-    </div>
+            {/* Related Products */}
+
+      <section className="mt-24">
+
+        <div className="mb-12 text-center">
+
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-5 py-2">
+
+            <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
+
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
+
+              YOU MAY ALSO LIKE
+
+            </p>
+
+          </div>
+
+          <h2 className="mt-6 font-heading text-4xl text-primary">
+
+            Related Products
+
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-2xl leading-8 text-secondary">
+
+            Discover more products from the same collection that
+            perfectly match your style and complete your shopping
+            experience.
+
+          </p>
+
+        </div>
+
+        <RelatedProducts
+          category={productData.category}
+          subCategory={productData.subCategory}
+        />
+
+      </section>
+
+    </section>
+
   ) : (
-    <div className='opacity-0'></div>
-  );
 
-};
+    <div className="flex items-center justify-center py-32">
 
-export default Product;
+      <div className="h-14 w-14 rounded-full border-4 border-accent border-t-transparent animate-spin"></div>
+
+    </div>
+
+  )
+
+}
+
+export default Product
