@@ -1,6 +1,5 @@
 import dns from 'dns'
 dns.setServers(['8.8.8.8', '1.1.1.1'])
-
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
@@ -21,17 +20,20 @@ connectCloudinary()
 app.use(express.json())
 app.use(cors())
 
-
 // api endpoints
 app.get('/', (req, res) => {
     res.send("API Working")
 })
-// api endpoints
-app.use("/api/user" ,userRouter)
+
+app.use("/api/user", userRouter)
 app.use('/api/product', productRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
 
-app.listen(port, () => {
-    console.log(`Server Started on PORT: ${port}`)
-})
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server Started on PORT: ${port}`)
+    })
+}
+
+export default app
