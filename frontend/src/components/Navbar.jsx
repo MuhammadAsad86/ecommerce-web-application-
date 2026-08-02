@@ -45,350 +45,460 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Subtle shadow intensification on scroll for depth
+  // Optimized scroll listener to prevent unnecessary re-renders
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", handleScroll);
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 15);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinkClass = ({ isActive }) =>
     `
-    relative px-4 py-2
-    rounded-2xl
-    text-[11px]
+    relative px-5 py-2.5
+    rounded-full
+    text-[12px]
     font-semibold
-    tracking-[0.15em]
+    tracking-[0.12em]
     transition-all
     duration-300
+    ease-out
     ${
       isActive
-        ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-[0_8px_18px_rgba(79,70,229,0.35)] scale-[1.03]"
-        : "text-slate-600 hover:bg-white hover:shadow-md hover:-translate-y-0.5"
+        ? "text-white bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 shadow-[0_4px_16px_rgba(99,102,241,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)] scale-[1.04]"
+        : "text-slate-600 hover:text-indigo-700 hover:-translate-y-[1px] hover:[text-shadow:0_0_12px_rgba(99,102,241,0.35)]"
     }
     `;
 
   const mobileLinkClass = ({ isActive }) =>
     `
-    rounded-2xl px-5 py-3.5 text-sm font-semibold transition-all
+    rounded-2xl px-5 py-3.5 text-sm font-semibold transition-all duration-300
     ${
       isActive
-        ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-200"
-        : "text-slate-700 hover:bg-white hover:shadow-md"
+        ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 text-white shadow-[0_10px_30px_rgba(99,102,241,0.35)]"
+        : "text-slate-700 bg-white/60 hover:bg-white hover:shadow-md"
     }
     `;
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 sm:px-8 md:px-12 lg:px-16">
-      <div
+    <>
+      {/*
+        FLOATING 3D GLASS NAVBAR
+        - Detached from the very top edge (floats with margin)
+        - True glassmorphism: blur + transparency + soft light reflection
+        - Neumorphic dual shadow (outer drop + inner highlight) for real depth
+        - Shrinks and intensifies blur/shadow on scroll
+      */}
+      <header
         className={`
-        h-[76px]
-        flex items-center justify-between
-        px-7
-        rounded-[28px]
-        bg-gradient-to-br from-white/95 to-slate-100/80
-        border border-white
-        backdrop-blur-xl
-        transition-all duration-300
-        ${
-          scrolled
-            ? "shadow-[10px_10px_28px_rgba(15,23,42,0.16),-8px_-8px_25px_rgba(255,255,255,1)]"
-            : "shadow-[8px_8px_25px_rgba(15,23,42,0.12),-8px_-8px_25px_rgba(255,255,255,0.95)]"
-        }
+          fixed left-0 right-0 z-50
+          w-full
+          flex justify-center
+          transition-all duration-500 ease-out
+          px-4 sm:px-8 md:px-12 lg:px-16
+          ${scrolled ? "top-2.5" : "top-5"}
         `}
       >
-        {/* Logo */}
-        <Link to="/" className="group relative transition-transform duration-300 hover:scale-105">
-          <img
-            src={assets.logo}
-            alt="RA Collection"
-            className="w-28 sm:w-32 drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)]"
-          />
-          {/* animated gradient underline on hover */}
-          <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 transition-all duration-300 group-hover:w-full rounded-full" />
-        </Link>
+        <div
+          className={`
+            relative w-full max-w-7xl
+            flex items-center justify-between
+            transition-all duration-500 ease-out
+            rounded-full
+            border border-white/60
+            bg-white/50
+            backdrop-blur-2xl
+            ${
+              scrolled
+                ? "h-[62px] px-5 sm:px-6 shadow-[0_10px_40px_rgba(79,70,229,0.18),0_2px_8px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_2px_rgba(148,163,184,0.15)]"
+                : "h-[72px] px-6 sm:px-8 shadow-[0_18px_50px_rgba(79,70,229,0.14),0_4px_14px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(148,163,184,0.12)]"
+            }
+          `}
+        >
+          {/* top light reflection sheen */}
+          <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
+          {/* subtle inner glow wash */}
+          <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/40 via-transparent to-indigo-50/20" />
 
-        {/* Desktop Menu */}
-        <nav className="hidden lg:flex items-center gap-2 p-1.5 rounded-2xl bg-white/40 shadow-inner">
-          <NavLink to="/" className={navLinkClass}>
-            HOME
-          </NavLink>
-          <NavLink to="/collection" className={navLinkClass}>
-            COLLECTION
-          </NavLink>
-          <NavLink to="/about" className={navLinkClass}>
-            ABOUT
-          </NavLink>
-          <NavLink to="/contact" className={navLinkClass}>
-            CONTACT
-          </NavLink>
-        </nav>
-
-        {/* Right Side Icons */}
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <button
-            onClick={() => setShowSearch(true)}
-            aria-label="Search"
-            className="
-            flex h-10 w-10 items-center justify-center rounded-full
-            bg-gradient-to-br from-white to-slate-100
-            border border-white
-            shadow-[5px_5px_12px_rgba(15,23,42,0.12),-5px_-5px_12px_white]
-            transition-all duration-300
-            hover:-translate-y-1 hover:shadow-[8px_10px_18px_rgba(15,23,42,0.15)]
-            active:scale-95
-            "
-          >
-            <img src={assets.search_icon} alt="Search" className="h-[18px] w-[18px]" />
-          </button>
-
-          {/* Profile */}
-          <div className="relative" ref={profileRef}>
-            <button
-              onClick={() => {
-                if (!token) {
-                  navigate("/login");
-                } else {
-                  setProfileOpen((prev) => !prev);
-                }
-              }}
-              aria-label="Profile"
-              className="
-              flex h-10 w-10 items-center justify-center rounded-full
-              bg-gradient-to-br from-white to-slate-100
-              border border-white
-              shadow-[5px_5px_12px_rgba(15,23,42,0.12),-5px_-5px_12px_white]
-              transition-all duration-300
-              hover:-translate-y-1
-              active:scale-95
-              "
-            >
-              <img src={assets.profile_icon} alt="Profile" className="h-[18px] w-[18px]" />
-            </button>
-
-            {/* Dropdown */}
-            {token && profileOpen && (
-              <div
-                className="
-                absolute right-0 top-12 w-44
-                origin-top-right
-                rounded-2xl
-                bg-white/95
-                border border-white
-                p-2
-                shadow-[8px_12px_25px_rgba(15,23,42,0.15)]
-                backdrop-blur-xl
-                animate-dropdown-in
-                "
-              >
-                <button
-                  onClick={() => {
-                    setProfileOpen(false);
-                    navigate("/orders");
-                  }}
-                  className="w-full rounded-xl px-4 py-3 text-left text-sm text-slate-700 transition hover:bg-slate-100"
-                >
-                  My Orders
-                </button>
-
-                <button
-                  onClick={logout}
-                  className="w-full rounded-xl px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Cart */}
+          {/* Logo */}
           <Link
-            to="/cart"
-            aria-label="Cart"
-            className="
-            relative flex h-10 w-10 items-center justify-center rounded-full
-            bg-gradient-to-br from-white to-slate-100
-            border border-white
-            shadow-[5px_5px_12px_rgba(15,23,42,0.12),-5px_-5px_12px_white]
-            transition-all duration-300
-            hover:-translate-y-1
-            active:scale-95
-            "
+            to="/"
+            className="group relative z-10 flex items-center transition-transform duration-300 hover:scale-105 active:scale-95"
           >
-            <img src={assets.cart_icon} alt="Cart" className="h-[18px] w-[18px]" />
-
-            {getCartCount() > 0 && (
-              <span
-                className="
-                absolute -right-1 -top-1
-                flex h-5 min-w-5
-                items-center justify-center
-                rounded-full
-                bg-gradient-to-br from-indigo-600 to-blue-600
-                text-[10px] font-bold text-white
-                shadow-lg shadow-indigo-300
-                animate-badge-pulse
-                "
-              >
-                {getCartCount()}
-              </span>
-            )}
+            <div className="relative">
+              {/* glow behind logo */}
+              <span className="absolute inset-0 -z-10 rounded-full bg-indigo-400/30 blur-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <img
+                src={assets.logo}
+                alt="RA Collection"
+                className={`
+                  drop-shadow-[0_4px_10px_rgba(79,70,229,0.15)]
+                  transition-all duration-500 ease-out
+                  ${scrolled ? "w-24 sm:w-28" : "w-28 sm:w-32"}
+                `}
+              />
+            </div>
+            {/* animated gradient underline on hover */}
+            <span className="absolute -bottom-1.5 left-0 h-[2px] w-0 bg-gradient-to-r from-indigo-500 via-violet-500 to-blue-500 shadow-[0_0_8px_rgba(99,102,241,0.6)] transition-all duration-300 ease-out group-hover:w-full rounded-full" />
           </Link>
 
-          {/* Mobile Menu */}
-          <button
-            onClick={() => setVisible(true)}
-            aria-label="Open menu"
+          {/* Desktop Menu — floating glass pill capsule */}
+          <nav
             className="
-            flex lg:hidden h-10 w-10
-            items-center justify-center
-            rounded-full
-            bg-gradient-to-br from-white to-slate-100
-            border border-white
-            shadow-[5px_5px_12px_rgba(15,23,42,0.12),-5px_-5px_12px_white]
-            active:scale-95
+              hidden lg:flex items-center gap-1
+              p-1.5 rounded-full
+              bg-white/50 backdrop-blur-xl
+              border border-white/70
+              shadow-[inset_0_2px_4px_rgba(148,163,184,0.18),inset_0_-1px_2px_rgba(255,255,255,0.9),0_4px_14px_rgba(79,70,229,0.06)]
             "
           >
-            <img src={assets.menu_icon} alt="Menu" className="h-[18px] w-[18px]" />
-          </button>
-        </div>
-      </div>
+            <NavLink to="/" className={navLinkClass}>
+              HOME
+            </NavLink>
+            <NavLink to="/collection" className={navLinkClass}>
+              COLLECTION
+            </NavLink>
+            <NavLink to="/about" className={navLinkClass}>
+              ABOUT
+            </NavLink>
+            <NavLink to="/contact" className={navLinkClass}>
+              CONTACT
+            </NavLink>
+          </nav>
 
-      {/* Overlay */}
-      <div
-        onClick={() => setVisible(false)}
-        className={`
-          fixed inset-0 z-40
-          bg-slate-900/30
-          backdrop-blur-sm
-          transition-all duration-300
-          ${visible ? "opacity-100" : "pointer-events-none opacity-0"}
-        `}
-      />
-
-      {/* Mobile Sidebar */}
-      <aside
-        className={`
-          fixed right-0 top-0 z-50
-          h-screen w-80
-          bg-gradient-to-br from-white to-slate-100
-          border-l border-white
-          shadow-2xl
-          transition-transform duration-300
-          ${visible ? "translate-x-0" : "translate-x-full"}
-        `}
-      >
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200/70">
-          <img src={assets.logo} alt="Logo" className="w-28 drop-shadow-md" />
-
-          <button
-            onClick={() => setVisible(false)}
-            aria-label="Close menu"
-            className="
-            flex h-9 w-9
-            items-center justify-center
-            rounded-full
-            bg-gradient-to-br from-white to-slate-100
-            shadow-md
-            transition-transform duration-300
-            hover:rotate-90
-            "
-          >
-            <img src={assets.dropdown_icon} alt="Close" className="h-4 rotate-180" />
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        <nav className="flex flex-col gap-2 p-6">
-          <NavLink to="/" onClick={() => setVisible(false)} className={mobileLinkClass}>
-            HOME
-          </NavLink>
-
-          <NavLink to="/collection" onClick={() => setVisible(false)} className={mobileLinkClass}>
-            COLLECTION
-          </NavLink>
-
-          <NavLink to="/about" onClick={() => setVisible(false)} className={mobileLinkClass}>
-            ABOUT
-          </NavLink>
-
-          <NavLink to="/contact" onClick={() => setVisible(false)} className={mobileLinkClass}>
-            CONTACT
-          </NavLink>
-
-          {!token ? (
+          {/* Right Side Icons */}
+          <div className="relative z-10 flex items-center gap-2.5 sm:gap-3">
+            {/* Search Button — floating glass 3D orb */}
             <button
-              onClick={() => {
-                setVisible(false);
-                navigate("/login");
-              }}
+              onClick={() => setShowSearch(true)}
+              aria-label="Search"
               className="
-              mt-4 rounded-2xl
-              bg-gradient-to-br from-indigo-600 to-blue-600
-              px-5 py-3.5
-              text-left text-sm font-semibold text-white
-              shadow-lg shadow-indigo-200
-              transition-transform active:scale-95
+                group relative flex h-10 w-10 items-center justify-center rounded-full
+                bg-gradient-to-b from-white to-slate-50/80
+                backdrop-blur-md
+                border border-white/80
+                shadow-[0_4px_10px_rgba(79,70,229,0.12),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_3px_rgba(148,163,184,0.2)]
+                transition-all duration-300 ease-out
+                hover:-translate-y-1 hover:scale-105 hover:shadow-[0_10px_22px_rgba(79,70,229,0.28),inset_0_1px_1px_rgba(255,255,255,1)]
+                hover:rotate-6
+                active:scale-95
               "
             >
-              LOGIN
+              <span className="absolute inset-0 rounded-full bg-indigo-400/0 blur-md transition-all duration-300 group-hover:bg-indigo-400/25" />
+              <img
+                src={assets.search_icon}
+                alt="Search"
+                className="relative h-[17px] w-[17px] opacity-75 transition-opacity duration-300 group-hover:opacity-100"
+              />
             </button>
-          ) : (
-            <>
+
+            {/* Profile Dropdown Trigger */}
+            <div className="relative" ref={profileRef}>
               <button
                 onClick={() => {
-                  setVisible(false);
-                  navigate("/orders");
+                  if (!token) {
+                    navigate("/login");
+                  } else {
+                    setProfileOpen((prev) => !prev);
+                  }
                 }}
+                aria-label="Profile"
                 className="
-                mt-4 rounded-2xl
+                  group relative flex h-10 w-10 items-center justify-center rounded-full
+                  bg-gradient-to-b from-white to-slate-50/80
+                  backdrop-blur-md
+                  border border-white/80
+                  shadow-[0_4px_10px_rgba(79,70,229,0.12),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_3px_rgba(148,163,184,0.2)]
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-1 hover:scale-105 hover:shadow-[0_10px_22px_rgba(79,70,229,0.28),inset_0_1px_1px_rgba(255,255,255,1)]
+                  active:scale-95
+                "
+              >
+                <span className="absolute inset-0 rounded-full bg-violet-400/0 blur-md transition-all duration-300 group-hover:bg-violet-400/25" />
+                <img
+                  src={assets.profile_icon}
+                  alt="Profile"
+                  className="relative h-[17px] w-[17px] opacity-75 transition-opacity duration-300 group-hover:opacity-100"
+                />
+              </button>
+
+              {/* Dropdown Menu — luxury glass panel */}
+              {token && profileOpen && (
+                <div
+                  className="
+                    absolute right-0 top-[52px] w-52
+                    origin-top-right
+                    rounded-[24px]
+                    bg-white/80
+                    border border-white/80
+                    p-2.5
+                    shadow-[0_20px_50px_rgba(79,70,229,0.22),0_4px_14px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,1)]
+                    backdrop-blur-2xl
+                    animate-dropdown-in
+                    z-50
+                  "
+                >
+                  <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      navigate("/orders");
+                    }}
+                    className="
+                      flex w-full items-center gap-2.5 rounded-2xl px-4 py-3
+                      text-left text-sm font-medium text-slate-700
+                      transition-all duration-200
+                      hover:bg-white hover:text-indigo-600 hover:shadow-sm hover:translate-x-0.5
+                    "
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-50 text-xs">
+                      📦
+                    </span>
+                    My Orders
+                  </button>
+
+                  <button
+                    onClick={logout}
+                    className="
+                      mt-1 flex w-full items-center gap-2.5 rounded-2xl px-4 py-3
+                      text-left text-sm font-medium text-red-600
+                      transition-all duration-200
+                      hover:bg-red-50 hover:shadow-sm hover:translate-x-0.5
+                    "
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 text-xs">
+                      🚪
+                    </span>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Cart Link — 3D glass orb with glowing gradient badge */}
+            <Link
+              to="/cart"
+              aria-label="Cart"
+              className="
+                group relative flex h-10 w-10 items-center justify-center rounded-full
+                bg-gradient-to-b from-white to-slate-50/80
+                backdrop-blur-md
+                border border-white/80
+                shadow-[0_4px_10px_rgba(79,70,229,0.12),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_3px_rgba(148,163,184,0.2)]
+                transition-all duration-300 ease-out
+                hover:-translate-y-1 hover:scale-105 hover:shadow-[0_10px_22px_rgba(79,70,229,0.28),inset_0_1px_1px_rgba(255,255,255,1)]
+                hover:-rotate-6
+                active:scale-95
+              "
+            >
+              <span className="absolute inset-0 rounded-full bg-blue-400/0 blur-md transition-all duration-300 group-hover:bg-blue-400/25" />
+              <img
+                src={assets.cart_icon}
+                alt="Cart"
+                className="relative h-[17px] w-[17px] opacity-75 transition-opacity duration-300 group-hover:opacity-100"
+              />
+
+              {getCartCount() > 0 && (
+                <span
+                  className="
+                    absolute -right-1.5 -top-1.5
+                    flex h-5 min-w-5
+                    items-center justify-center px-1
+                    rounded-full
+                    bg-gradient-to-br from-indigo-500 via-violet-500 to-blue-600
+                    text-[10px] font-bold text-white
+                    shadow-[0_2px_8px_rgba(99,102,241,0.6),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                    animate-badge-pulse
+                    ring-2 ring-white/90
+                  "
+                >
+                  {getCartCount()}
+                </span>
+              )}
+            </Link>
+
+            {/* Mobile Menu Trigger */}
+            <button
+              onClick={() => setVisible(true)}
+              aria-label="Open menu"
+              className="
+                flex lg:hidden h-10 w-10
+                items-center justify-center
+                rounded-full
+                bg-gradient-to-b from-white to-slate-50/80
+                backdrop-blur-md
+                border border-white/80
+                shadow-[0_4px_10px_rgba(79,70,229,0.12),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_3px_rgba(148,163,184,0.2)]
+                transition-all duration-300 ease-out
+                hover:-translate-y-1 hover:scale-105
+                active:scale-95
+              "
+            >
+              <img src={assets.menu_icon} alt="Menu" className="h-[17px] w-[17px] opacity-75" />
+            </button>
+          </div>
+        </div>
+
+        {/* Overlay Backdrop for Mobile Menu */}
+        <div
+          onClick={() => setVisible(false)}
+          className={`
+            fixed inset-0 z-40
+            bg-slate-950/30
+            backdrop-blur-md
+            transition-all duration-300 ease-in-out
+            ${visible ? "opacity-100 pointer-events-auto" : "pointer-events-none opacity-0"}
+          `}
+        />
+
+        {/* Mobile Sidebar — floating glass panel */}
+        <aside
+          className={`
+            fixed right-3 top-3 bottom-3 z-50
+            w-[85%] max-w-80
+            rounded-[32px]
+            bg-white/80 backdrop-blur-2xl
+            border border-white/70
+            shadow-[0_25px_60px_rgba(79,70,229,0.25),inset_0_1px_1px_rgba(255,255,255,1)]
+            transition-all duration-500 ease-out
+            overflow-hidden
+            ${visible ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0"}
+          `}
+        >
+          {/* light sheen */}
+          <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-white/70">
+            <img src={assets.logo} alt="Logo" className="w-28 drop-shadow-sm" />
+
+            <button
+              onClick={() => setVisible(false)}
+              aria-label="Close menu"
+              className="
+                flex h-9 w-9
+                items-center justify-center
+                rounded-full
                 bg-white
-                px-5 py-3.5
-                text-left text-sm font-semibold text-slate-700
-                shadow-md
-                transition-transform active:scale-95
-                "
-              >
-                MY ORDERS
-              </button>
+                shadow-[0_4px_10px_rgba(79,70,229,0.15),inset_0_1px_1px_rgba(255,255,255,1)]
+                transition-transform duration-300 ease-out
+                hover:rotate-90 hover:scale-105
+                active:scale-95
+              "
+            >
+              <img src={assets.dropdown_icon} alt="Close" className="h-4 rotate-180 opacity-70" />
+            </button>
+          </div>
 
+          {/* Mobile Navigation Links — floating cards */}
+          <nav className="flex flex-col gap-2.5 p-6">
+            <NavLink to="/" onClick={() => setVisible(false)} className={mobileLinkClass}>
+              HOME
+            </NavLink>
+
+            <NavLink to="/collection" onClick={() => setVisible(false)} className={mobileLinkClass}>
+              COLLECTION
+            </NavLink>
+
+            <NavLink to="/about" onClick={() => setVisible(false)} className={mobileLinkClass}>
+              ABOUT
+            </NavLink>
+
+            <NavLink to="/contact" onClick={() => setVisible(false)} className={mobileLinkClass}>
+              CONTACT
+            </NavLink>
+
+            {!token ? (
               <button
                 onClick={() => {
                   setVisible(false);
-                  logout();
+                  navigate("/login");
                 }}
                 className="
-                mt-2 rounded-2xl
-                bg-red-50
-                px-5 py-3.5
-                text-left text-sm font-semibold text-red-600
-                transition-transform active:scale-95
+                  mt-4 rounded-2xl
+                  bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600
+                  px-5 py-3.5
+                  text-left text-sm font-semibold text-white
+                  shadow-[0_10px_28px_rgba(99,102,241,0.4),inset_0_1px_1px_rgba(255,255,255,0.3)]
+                  transition-transform active:scale-95
                 "
               >
-                LOGOUT
+                LOGIN
               </button>
-            </>
-          )}
-        </nav>
-      </aside>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setVisible(false);
+                    navigate("/orders");
+                  }}
+                  className="
+                    mt-4 rounded-2xl
+                    bg-white/70
+                    px-5 py-3.5
+                    text-left text-sm font-semibold text-slate-700
+                    shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_2px_8px_rgba(79,70,229,0.08)]
+                    transition-transform active:scale-95
+                  "
+                >
+                  MY ORDERS
+                </button>
 
-      {/* Local keyframes — no extra dependencies */}
-      <style>{`
-        @keyframes dropdownIn {
-          from { opacity: 0; transform: scale(0.95) translateY(-6px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .animate-dropdown-in { animation: dropdownIn 0.18s ease-out; }
+                <button
+                  onClick={() => {
+                    setVisible(false);
+                    logout();
+                  }}
+                  className="
+                    mt-2 rounded-2xl
+                    bg-red-50/80
+                    px-5 py-3.5
+                    text-left text-sm font-semibold text-red-600
+                    shadow-[inset_0_1px_1px_rgba(255,255,255,1)]
+                    transition-transform active:scale-95
+                  "
+                >
+                  LOGOUT
+                </button>
+              </>
+            )}
+          </nav>
+        </aside>
 
-        @keyframes badgePulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(79,70,229,0.4); }
-          50% { box-shadow: 0 0 0 5px rgba(79,70,229,0); }
-        }
-        .animate-badge-pulse { animation: badgePulse 2s infinite; }
-      `}</style>
-    </header>
+        {/* Local Keyframe Animations */}
+        <style>{`
+          @keyframes dropdownIn {
+            from { opacity: 0; transform: scale(0.94) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+          }
+          .animate-dropdown-in { animation: dropdownIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+          @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.5), 0 2px 8px rgba(99,102,241,0.6); }
+            50% { box-shadow: 0 0 0 7px rgba(99,102,241,0), 0 2px 8px rgba(99,102,241,0.6); }
+          }
+          .animate-badge-pulse { animation: badgePulse 2.2s infinite; }
+        `}</style>
+      </header>
+
+      {/*
+        Top spacing spacer element:
+        Prevents page content from hiding behind the fixed floating navbar
+        across mobile, tablet, and desktop breakpoints.
+      */}
+      <div className="h-[104px] sm:h-[112px] w-full aria-hidden:true" />
+    </>
   );
 };
 
