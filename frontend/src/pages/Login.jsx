@@ -1,389 +1,269 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ShopContext } from "../context/ShopContext";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
-
   const [currentState, setCurrentState] = useState("Login");
-
-  const {
-    token,
-    setToken,
-    navigate,
-    backendUrl,
-  } = useContext(ShopContext);
-
+  const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
   const location = useLocation();
-
-  const redirectTo =
-    location.state?.from?.pathname || "/";
+  const redirectTo = location.state?.from?.pathname || "/";
 
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmitHandler = async (event) => {
-
     event.preventDefault();
+    setLoading(true);
 
     try {
-
       if (currentState === "Sign Up") {
-
-        const response = await axios.post(
-          backendUrl + "/api/user/register",
-          {
-            name,
-            email,
-            password,
-          }
-        );
+        const response = await axios.post(backendUrl + "/api/user/register", {
+          name,
+          email,
+          password,
+        });
 
         if (response.data.success) {
-
+          localStorage.setItem("token", response.data.token);
           setToken(response.data.token);
-
-          localStorage.setItem(
-            "token",
-            response.data.token
-          );
-
+          toast.success("Registration Successful");
+          navigate(redirectTo, { replace: true });
         } else {
-
           toast.error(response.data.message);
-
         }
-
       } else {
-
-        const response = await axios.post(
-          backendUrl + "/api/user/login",
-          {
-            email,
-            password,
-          }
-        );
+        const response = await axios.post(backendUrl + "/api/user/login", {
+          email,
+          password,
+        });
 
         if (response.data.success) {
-
+          localStorage.setItem("token", response.data.token);
           setToken(response.data.token);
-
-          localStorage.setItem(
-            "token",
-            response.data.token
-          );
-
+          toast.success("Login Successful");
+          navigate(redirectTo, { replace: true });
         } else {
-
           toast.error(response.data.message);
-
         }
-
       }
-
     } catch (error) {
-
-      console.log(error);
-
-      toast.error(error.message);
-
+      console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
     }
-
   };
 
+  // Redirect user back to the page they came from if already authenticated
   useEffect(() => {
-
     if (token) {
-
-      navigate(
-        redirectTo,
-        {
-          replace: true,
-        }
-      );
-
+      navigate(redirectTo, { replace: true });
     }
-
-  }, [token, redirectTo]);
-
-  useEffect(() => {
-
-    if (token && localStorage.getItem("token")) {
-
-      setToken(
-        localStorage.getItem("token")
-      );
-
-    }
-
-  }, []);
+  }, [token, navigate, redirectTo]);
 
   return (
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gray-950 px-4 py-10">
 
-        <div className="relative min-h-screen w-full overflow-hidden bg-[#FAFAFA] font-[Inter]">
-
-      {/* ===== Right Premium Background ===== */}
-
-      <div
-        className="absolute inset-y-0 right-0 w-full lg:w-[62%]"
-        style={{
-          clipPath: "polygon(30% 0,100% 0,100% 100%,0% 100%)",
-          background:
-            "linear-gradient(155deg,#0A0A0B 0%,#0A0A0B 45%,#16204F 72%,#3B5BFF 100%)",
-        }}
-      >
-
-        <div className="pointer-events-none absolute -top-32 right-[-6rem] h-[32rem] w-[32rem] rounded-full bg-[#3B5BFF]/40 blur-[110px]" />
-
-        <div className="pointer-events-none absolute bottom-[-8rem] left-1/3 h-[26rem] w-[26rem] rounded-full bg-[#3B5BFF]/25 blur-[100px]" />
-
-        <div className="pointer-events-none absolute top-1/2 right-1/4 h-56 w-56 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
-
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
-            backgroundSize: "46px 46px",
-          }}
-        />
-
-        <div className="absolute bottom-14 left-1/2 hidden w-[80%] -translate-x-1/2 text-center lg:block">
-
-          <p className="font-[Sora] text-lg font-semibold tracking-wide text-white/90">
-
-            Elevate every purchase.
-
-          </p>
-
-          <p className="mt-1 text-sm text-white/40">
-
-            RA Collection — curated for the modern shopper.
-
-          </p>
-
-        </div>
-
+      {/* ---------------- Animated Mesh Gradient Background ---------------- */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl animate-blob" />
+        <div className="absolute -bottom-40 -right-32 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+        {/* subtle grid overlay for depth */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:44px_44px]" />
       </div>
 
-      <div className="pointer-events-none absolute left-[-4rem] top-1/4 h-40 w-40 rounded-full bg-[#3B5BFF]/5 blur-3xl" />
+      {/* ---------------- Glass Card ---------------- */}
+      <div className="relative w-full max-w-md animate-fade-up">
 
-      <div className="pointer-events-none absolute bottom-[-3rem] left-10 h-32 w-32 rounded-full bg-[#0A0A0B]/5 blur-3xl" />
+        {/* gradient border glow */}
+        <div className="absolute -inset-[1.5px] rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 opacity-60 blur-sm" />
 
-      {/* Logo */}
+        <div className="relative rounded-3xl bg-gray-900/70 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-indigo-900/40 px-8 py-10 sm:px-10 sm:py-12">
 
-      <div className="absolute left-8 top-8 z-20 sm:left-10 sm:top-10 lg:left-16">
+          {/* Logo / Brand mark */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4">
+              <span className="text-white font-semibold text-lg tracking-tight">RA</span>
+            </div>
 
-        <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#0A0A0B]/15 bg-white/70 backdrop-blur">
-
-          <span className="font-[Sora] text-sm font-semibold text-[#0A0A0B]">
-
-            RA
-
-          </span>
-
-        </div>
-
-      </div>
-
-      {/* Login Card */}
-
-      <div className="relative z-10 flex min-h-screen w-full items-center px-6 sm:px-10 lg:px-16">
-
-        <div className="w-full max-w-[420px]">
-
-          <div
-            className="rounded-3xl border border-white/60 px-7 py-10 shadow-[0_20px_40px_-10px_rgba(10,10,11,0.12),0_40px_80px_-20px_rgba(10,10,11,0.16)] sm:px-9"
-            style={{
-              background: "rgba(255,255,255,0.6)",
-              backdropFilter: "blur(22px)",
-              WebkitBackdropFilter: "blur(22px)",
-            }}
-          >
-
-            <h1 className="mb-1 text-center font-[Sora] text-[28px] font-semibold text-[#0A0A0B]">
-
-              {currentState === "Login"
-                ? "Sign In"
-                : "Sign Up"}
-
-            </h1>
-
-            <p className="mb-7 text-center text-[13px] text-[#6B6B70]">
-
-              {currentState === "Login"
-                ? "Welcome back to RA Collection"
-                : "Create your RA Collection account"}
-
-            </p>
-
-            <form
-              onSubmit={onSubmitHandler}
-              className="flex flex-col gap-4"
-            >
-
-              {currentState !== "Login" && (
-
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) =>
-                    setName(e.target.value)
-                  }
-                  placeholder="Full name"
-                  className="w-full rounded-xl border border-[#E5E5EA] bg-white/70 px-4 py-3.5 text-sm outline-none focus:border-[#3B5BFF] focus:ring-4 focus:ring-[#3B5BFF]/10"
-                />
-
-              )}
-
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-                placeholder="Email address"
-                className="w-full rounded-xl border border-[#E5E5EA] bg-white/70 px-4 py-3.5 text-sm outline-none focus:border-[#3B5BFF] focus:ring-4 focus:ring-[#3B5BFF]/10"
-              />
-
-              <div className="relative">
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  required
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
-                  placeholder="Password"
-                  className="w-full rounded-xl border border-[#E5E5EA] bg-white/70 px-4 py-3.5 pr-11 text-sm outline-none focus:border-[#3B5BFF] focus:ring-4 focus:ring-[#3B5BFF]/10"
-                />
-
-                <button
-                  type="button"
-                  tabIndex={-1}
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8A8A8E]"
-                >
-
-                  {showPassword ? (
-                    <FiEyeOff />
-                  ) : (
-                    <FiEye />
-                  )}
-
-                </button>
-
-              </div>
-                            <p className="-mt-1 cursor-pointer text-[12.5px] text-[#6B6B70] underline decoration-[#E5E5EA] underline-offset-2 transition-colors hover:text-[#3B5BFF]">
-
-                Forgot password?
-
-              </p>
-
+            {/* Tab Switch */}
+            <div className="relative flex items-center gap-6">
               <button
-                type="submit"
-                className="mt-2 w-full rounded-full bg-[#0A0A0B] py-3.5 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#3B5BFF] hover:shadow-[0_10px_28px_-8px_rgba(59,91,255,0.55)] active:translate-y-0"
+                type="button"
+                onClick={() => setCurrentState("Login")}
+                className={`text-lg font-medium tracking-tight transition-colors duration-300 ${
+                  currentState === "Login" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                }`}
               >
-
-                {currentState === "Login"
-                  ? "Login In"
-                  : "Sign Up"}
-
+                Login
               </button>
+              <span className="text-gray-700">/</span>
+              <button
+                type="button"
+                onClick={() => setCurrentState("Sign Up")}
+                className={`text-lg font-medium tracking-tight transition-colors duration-300 ${
+                  currentState === "Sign Up" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
 
-              <p className="mt-1 text-center text-[12.5px] text-[#6B6B70]">
-
-                {currentState === "Login" ? (
-
-                  <>
-
-                    Don't have an account?{" "}
-
-                    <span
-                      onClick={() =>
-                        setCurrentState("Sign Up")
-                      }
-                      className="cursor-pointer font-medium text-[#3B5BFF] underline underline-offset-2 hover:text-[#0A0A0B]"
-                    >
-
-                      Sign up
-
-                    </span>
-
-                  </>
-
-                ) : (
-
-                  <>
-
-                    Already have an account?{" "}
-
-                    <span
-                      onClick={() =>
-                        setCurrentState("Login")
-                      }
-                      className="cursor-pointer font-medium text-[#3B5BFF] underline underline-offset-2 hover:text-[#0A0A0B]"
-                    >
-
-                      Sign in
-
-                    </span>
-
-                  </>
-
-                )}
-
-              </p>
-
-            </form>
-
+            {/* animated underline indicator */}
+            <div className="relative w-24 h-[2px] mt-3 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className={`absolute top-0 h-full w-1/2 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full transition-transform duration-300 ease-out ${
+                  currentState === "Login" ? "translate-x-0" : "translate-x-full"
+                }`}
+              />
+            </div>
           </div>
 
-        </div>
+          {/* ---------------- Form ---------------- */}
+          <form onSubmit={onSubmitHandler} className="flex flex-col gap-4">
 
+            {currentState === "Sign Up" && (
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-400">
+                  Full Name
+                </label>
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  type="text"
+                  required
+                  placeholder="Enter your name"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-indigo-400/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-indigo-500/20"
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-gray-400">
+                Email Address
+              </label>
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                type="email"
+                required
+                placeholder="you@example.com"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-indigo-400/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-indigo-500/20"
+              />
+            </div>
+
+            {/* Password field with show/hide toggle */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-gray-400">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="Enter your password"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 pl-4 pr-11 py-3 text-sm text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-indigo-400/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-indigo-500/20"
+                />
+
+                {/* Show/Hide password toggle */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-300 transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    // Eye-off icon
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                      <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                      <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                      <line x1="2" y1="2" x2="22" y2="22" />
+                    </svg>
+                  ) : (
+                    // Eye icon
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-gray-400 -mt-1">
+              <p className="cursor-pointer hover:text-indigo-300 transition-colors">
+                Forgot your password?
+              </p>
+              {currentState === "Login" ? (
+                <p
+                  onClick={() => setCurrentState("Sign Up")}
+                  className="cursor-pointer hover:text-indigo-300 transition-colors"
+                >
+                  Create Account
+                </p>
+              ) : (
+                <p
+                  onClick={() => setCurrentState("Login")}
+                  className="cursor-pointer hover:text-indigo-300 transition-colors"
+                >
+                  Login Here
+                </p>
+              )}
+            </div>
+
+            {/* Premium submit button with glow + loading state */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative mt-4 w-full overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Please wait...
+                  </>
+                ) : currentState === "Login" ? (
+                  "Sign In"
+                ) : (
+                  "Sign Up"
+                )}
+              </span>
+              {/* subtle shine sweep on hover */}
+              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+            </button>
+          </form>
+        </div>
       </div>
 
-      <style>
+      {/* ---------------- Local keyframes (no extra deps) ---------------- */}
+      <style>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -40px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        .animate-blob { animation: blob 10s infinite ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
 
-        {`
-
-          @keyframes float {
-
-            0%,100% {
-
-              transform: translateY(0px);
-
-            }
-
-            50% {
-
-              transform: translateY(-10px);
-
-            }
-
-          }
-
-        `}
-
-      </style>
-
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeUp 0.6s ease-out; }
+      `}</style>
     </div>
-
   );
-
 };
 
 export default Login;
